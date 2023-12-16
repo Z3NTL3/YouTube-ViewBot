@@ -14,12 +14,16 @@ var targetURL = null;
 var timeout = 0;
 var retries = 0;
 var custom = false;
+var rotating = false;
 const program = new commander_1.Command()
     .name("Youtube ViewBot")
     .description("CLI for YouTube views bot - by @z3ntl3")
     .version("v1-BETA")
     .option("-custom", "Whether your going to load custom proxies, you have to put it in '/ProxyBeast/proxies.txt'", (val, prev) => {
     custom = true;
+})
+    .option("-rotating", "determines if you use rotating proxy endpoint for automatic ip assigning and tunneling", (val, prev) => {
+    rotating = true;
 });
 program
     .command("video <url> <timeout> <retries>")
@@ -72,7 +76,7 @@ const random = (arr) => {
     let c = new AbortController();
     await checker.startChecking(["--timeout", String(timeout),
         "--retry", String(retries),
-        "--protocol", "http"], c).catch((err) => {
+        "--protocol", "http", rotating ? "--rotating" : null], c).catch((err) => {
         if (err.message === "The operation was aborte") {
             process.stderr.write(err.message);
             process.exit(-1);
